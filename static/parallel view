@@ -1,0 +1,29 @@
+
+function path(d) {
+    return d3.line()(dimensions.map(function(p) { return [parallel_x(p), parallel_y[p](d[p])]; }));
+}
+
+parallel_plot
+            .selectAll("myPath")
+            .data(scatter)
+            .enter().append("path")
+            .attr("d",  path)
+            .style("fill", "none")
+            .style("stroke", "#69b3a2")
+            .style("opacity", 0.5)
+
+        parallel_plot.selectAll("myAxis")
+            // For each dimension of the dataset I add a 'g' element:
+            .data(dimensions).enter()
+            .append("g")
+            // I translate this element to its right position on the x axis
+            .attr("transform", function(d) { return "translate(" + parallel_x(d) + ")"; })
+            // And I build the axis with the call function
+            .each(function(d) { d3.select(this).call(d3.axisLeft().scale(parallel_y[d])); })
+            // Add axis title
+            .append("text")
+              .style("text-anchor", "middle")
+              .attr("y", -9)
+              .text(function(d) { return d; })
+              .style("fill", "black")
+        

@@ -1,0 +1,175 @@
+ <!doctype html>
+ <html lang="en">
+   <head>
+	<script src="https://d3js.org/d3.v5.min.js"></script>
+	<script src='https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js'></script>
+	<script src="https://unpkg.com/d3-simple-slider"></script>
+	<script src="https://cdn.jsdelivr.net/npm/d3-quadtree@3"></script>
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+
+
+	<link href="https://cdn.rawgit.com/RasmusFonseca/d3RangeSlider/master/d3RangeSlider.css" rel="stylesheet">
+	 <!-- Required meta tags -->
+	 <meta charset="utf-8">
+	 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+ 
+	 <!-- Bootstrap CSS -->
+	 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-F3w7mX95PdgyTmZZMECAngseQB83DfGTowi0iMjiWaeVhAn4FJkqJByhZMI3AhiU" crossorigin="anonymous">
+ 
+	 <title>Hello, world!</title>
+   </head>
+   <body>
+	  <style>
+		  #token_attention{
+			  position: relative;
+			  float: left;
+			  overflow-x:scroll;
+			  overflow-y:scroll;
+			  height: 500px;
+			  width: 500px;
+
+		  }
+		  #layer_attention{
+			  position: relative;
+			  float: left;
+			  overflow-x:scroll;
+			  overflow-y:scroll;
+			  height: 500px;
+			  width: 500px;
+
+		  }
+		  #head_attention{
+			  position: relative;
+			  float: left;
+			  overflow-x:scroll;
+			  overflow-y:scroll;
+			  height: 500px;
+			  width: 500px;
+
+		  }
+		  #typeButton{
+			  height: 200px;
+			  width: 100px;
+			  position: absolute;
+			  left: 200px;
+			  top: 850px;
+
+		  }
+		  #scatterlabel{
+			  height: 200px;
+			  width: 100px;
+			  position: absolute;
+			  left: 300px;
+			  top: 840px;
+
+		  }
+		  #similarity_value_range{
+			  height: 100px;
+			  width: 100px;
+			  position: absolute;
+			  left: 40px;
+			  top: 845px;
+
+		  }
+	  </style>
+	<div class="bg-success p-2 text-dark bg-opacity-10 border border-dark  ">Overview</div>
+
+	<div class="bg-white p-2 text-dark  border border-dark  " >
+		<div class="row">
+			<div class="col">
+				<p class="fw-bolder">Data info</p>
+				<p><span class="fw-lighter">Resources : </span><span class="fw-normal">IMDb</span></p>
+				<p><span class="fw-lighter">Training instances : </span><span class="fw-normal">23668(N:14385/P:14953)</span></p>
+				<p><span class="fw-lighter">Loading instances : </span><span class="fw-normal">500(N:231/P:269)</span></p>
+			</div>
+			<div class="col">
+				<p class="fw-bolder">BERT-base info</p>
+				<p><span class="fw-lighter">Number of layer : </span><span class="fw-normal">12</span></p>
+				<p><span class="fw-lighter">Number of head : </span><span class="fw-normal">12</span></p>
+				<p><span class="fw-lighter">Accuracy : </span><span class="fw-normal">0.9646</span></p>
+			</div>
+			<div class="col">
+				<p class="fw-bolder">BERT-large info</p>
+				<p><span class="fw-lighter">Number of layer : </span><span class="fw-normal">24</span></p>
+				<p><span class="fw-lighter">Number of head : </span><span class="fw-normal">16</span></p>
+				<p><span class="fw-lighter">Accuracy : </span><span class="fw-normal">0.9701</span></p>
+			</div>
+			<div class ="col" id="legnend">
+				<p class="fw-bolder">Legends and Saturation</p>	
+			</div>
+		</div>
+	</div>
+	<div class="container-fluid">
+		<div class="row">
+			<div id ="layercombination" class="col bg-success p-2 text-dark bg-opacity-10 border border-dark  ">Layer Similarity</div>
+			<div id ="headcombination" class="col bg-success p-2 text-dark bg-opacity-10 border border-dark  ">Head Similarity
+			<!-- Button trigger modal -->
+				<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal">
+					 Self head similarity graph
+				</button>
+				
+				<!-- Modal -->
+				<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+					<div class="modal-dialog modal-xl">
+					<div class="modal-content">
+						<div class="modal-header">
+						<h5 class="modal-title" id="exampleModalLabel">Self head similarity graph</h5>
+						<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+						</div>
+						<div class="modal-body" id="modalbody">
+						
+						</div>
+					</div>
+				</div>
+			</div>
+	
+			</div>
+		</div>
+		<div class="row">
+			<div id="layersimilarity" class="col bg-white p-2 text-dark  border border-dark  " ></div>
+			<div  id ="headsimilarity" class="col bg-white p-2 text-dark  border border-dark  " ></div>
+		</div>
+	</div>
+	<div class="container-fluid">
+		<div class="row">
+			<div id="scatter_label" class="col bg-success p-2 text-dark bg-opacity-10 border border-dark  ">Scatter View
+				<div id="similarity_value_range"></div>
+				<div class="col-sm-2"><p id="value-range"></p></div>
+				<div class="col-sm"><div id="slider-range"></div></div>		 
+				<div id="typeButton">
+					<input type="radio" name="typeButton" value="Origin" checked>Origin<br><input type="radio" name="typeButton" value="Positive"> Positive<br><input type="radio" name="typeButton" value="Negative">Negative<br>
+				</div>
+				<div id="scatterlabel"></div>
+			</div>
+			<div class="col bg-success p-2 text-dark bg-opacity-10 border border-dark  ">Token Attention
+				<input type="range" name="mySlider" id=mySlider min="0.01" max="0.6" value="0.1" step="0.01" oninput="this.nextElementSibling.value = this.value"><output>0.1</output>
+				<div id="token_attentoin_legend"></div>
+			</div>
+				<div class="col bg-success p-2 text-dark bg-opacity-10 border border-dark  ">Attention Summary
+					<div id="token_legend"></div>
+				</div>
+				</div>
+					
+		<div class="row">
+			<div id ="chosenscatter" class="col bg-white p-2 text-dark  border border-dark  " ></div>
+			<div id="token_attention" class="col bg-white p-2 text-dark  border border-dark  overflow-auto" ></div>
+			<div id="token" class="col bg-white p-2 text-dark  border border-dark  " ></div>
+		</div>
+	</div>
+	
+
+	
+	
+
+ 
+	 <!-- Optional JavaScript -->
+	 <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+	 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-/bQdsTh/da6pkI1MST/rWKFNjaCP5gBSY4sEBT38Q/9RBh9AH40zEOg7Hlq2THRZ" crossorigin="anonymous"></script>
+   </body>
+   <script type="text/javascript" src="{{url_for('static', filename= 'main.js')}}"></script>
+   <script type="text/javascript" src="{{url_for('static', filename= 'requesthead.js')}}"></script>
+   <script type="text/javascript" src="{{url_for('static', filename= 'filterlayer.js')}}"></script>
+   <script type="text/javascript" src="{{url_for('static', filename= 'd3-tip.js')}}"></script>
+ </html>
+ 
